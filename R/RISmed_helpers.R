@@ -56,20 +56,21 @@ format_RISmed.Medline <- function(x) {
 # -------------------------------------------------------------------------
 # Helper functions to extract author names returned by the RISmed::Author()
 # function
-lastname <- function(x, i) {
-    return(x[i, "LastName"])
-}
-
-initial <- function(x, i) {
-    return(x[i, "Initials"])
-}
-
 fl_auth <- function(x) {
     last_idx <- nrow(x)
-    return(c(FIRSTAUTHLN = lastname(x, 1),
-               FIRSTAUTHINIT = initial(x, 1),
-               LASTAUTHLN = lastname(x, last_idx),
-               LASTAUTHINIT = initial(x, last_idx)))
+    # Leaves last author last name and initials blank if there is only one
+    # author
+    if (last_idx > 1) {
+        return(c(FIRSTAUTHLN = x[1, "LastName"],
+                   FIRSTAUTHINIT = x[1, "Initials"],
+                   LASTAUTHLN = x[last_idx, "LastName"],
+                   LASTAUTHINIT = x[last_idx, "Initials"]))
+    } else {
+        return(c(FIRSTAUTHLN = x[1, "LastName"],
+                 FIRSTAUTHINIT = x[1, "Initials"],
+                 LASTAUTHLN = "",
+                 LASTAUTHINIT = ""))
+    }
 }
 
 auth_matrix <- function(x) {
