@@ -35,7 +35,7 @@ format_RISmed.default <- function(x) {
 #' @export
 format_RISmed.Medline <- function(x) {
 
-    auth <- auth_matrix(x)
+    auth <- auth_matrix_RISmed(x)
 
     out <- data.frame("TITLE"= RISmed::ArticleTitle(x),
                       "ABSTRACT"= RISmed::AbstractText(x),
@@ -56,7 +56,7 @@ format_RISmed.Medline <- function(x) {
 # -------------------------------------------------------------------------
 # Helper functions to extract author names returned by the RISmed::Author()
 # function
-fl_auth <- function(x) {
+fl_auth_RISmed <- function(x) {
     last_idx <- nrow(x)
     # Leaves last author last name and initials blank if there is only one
     # author
@@ -73,9 +73,9 @@ fl_auth <- function(x) {
     }
 }
 
-auth_matrix <- function(x) {
+auth_matrix_RISmed <- function(x) {
     auth_list <- RISmed::Author(x)
-    return(t(sapply(auth_list, fl_auth)))
+    return(t(sapply(auth_list, fl_auth_RISmed)))
 }
 
 # -------------------------------------------------------------------------
