@@ -1,6 +1,36 @@
+#' Builds a \code{data.frame} containing publication info from an Scopus
+#' query
+#'
+#' This function takes the manually downloaded publication data from a Scopus
+#' query and formats it so that it can be combined with bibliographic data
+#' from other sources.
+#'
+#' @param x A \code{data.frame} constructed from manually downloaded Scopus
+#' data.
+#'
+#' @return A \code{data.frame} formatted for combination with other sources of
+#' bibliographic data.
+#'
+#' @export
+#'
+#' @seealso \code{\link{format_RISmed}}
+#' @examples
+#' \dontrun{
+#' library(RISmed)
+#' scopus_data <- read.csv("your_scopus_data.csv", stringsAsFactors = FALSE)
+#' form_s_data <- format_scopus(scopus_data)
+#' }
+format_scopus <- function(x) {
+    UseMethod("format_scopus")
+}
 
+#' @export
+format_scopus.default <- function(x) {
+    stop("x must be of class data.frame")
+}
 
-format_Scopus <- function(x) {
+#' @export
+format_scopus.data.frame <- function(x) {
 
     # Change NA's to blanks
     x[is.na(x)] <- ""
@@ -85,12 +115,13 @@ format_Scopus <- function(x) {
 
 }
 
-# ----------------------------------------------------------------------------
-# Helpers to get first name and initials
+# Helper functions ------------------------------------------------------------
 
-# Input is a vector of names with the format "Last Init.Init."
 
 # Get last name and initial of nth author
+
+# Input: vector of names with the format "Last Init.Init."
+# Output: vector of last name and initial of nth author
 ln_init_scopus <- function(x, idx) {
     # Divide based on spaces
     tmp <- strsplit(x, " ")[[idx]]
@@ -107,12 +138,9 @@ ln_init_scopus <- function(x, idx) {
     return(c(LN, INIT))
 }
 
-
-# -----------------------------------------------------------------------------
-# Helper to make vector of first and last author last name and initials
-
-# Input is a string of names with the format "Last Init.Init.," where the ", "
+# Input: string of names with the format "Last Init.Init.," where the ", "
 # separates author names
+# Output: vector of first and last author last name and initials
 
 fl_auth_scopus <- function(x) {
     # Check that length is not zero
@@ -141,12 +169,10 @@ fl_auth_scopus <- function(x) {
     return(out)
 }
 
-# -----------------------------------------------------------------------------
-
-# Helper to make matrix of first and last author last name and initials
+# Makes matrix of first and last author last name and initials
 # Input: is data.frame created from a manual download of a scopus query
 # Output: a matrix with first and last author last names and initials in four
-# columns
+# columns; rows constitute different studies
 auth_matrix_scopus <- function(x, idx) {
     x[, idx] <- pre_edit_auth_nms_scopus(x[, idx])
     return(t(sapply(x[, idx], fl_auth_scopus)))
