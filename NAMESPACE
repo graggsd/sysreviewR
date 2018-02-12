@@ -2,4 +2,7 @@
 
 S3method(format_RISmed,Medline)
 S3method(format_RISmed,default)
+S3method(format_scopus,data.frame)
+S3method(format_scopus,default)
 export(format_RISmed)
+export(format_scopus)

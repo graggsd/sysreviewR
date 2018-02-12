@@ -150,8 +150,8 @@ add_match_ID <- function(x,
 }
 
 get_matches <- function(x) {
-    matched_match_IDs <- unique(x[duplicated(x[,"match_ID"]), "match_ID"])
-    x <- x[x[,"match_ID"] %in% matched_match_IDs,]
+    matched_match_IDs <- unique(x[duplicated(x[, "match_ID"]), "match_ID"])
+    x <- x[x[,"match_ID"] %in% matched_match_IDs, ]
     idx <- order(x[, "match_ID"])
     return(x[idx,])
 }
@@ -201,9 +201,7 @@ remove_matches_screened <- function(x, db_pref = NULL, ignore_IDs = NULL) {
             x <- x[!(x[, "internal_ID"] %in% removal_ids), ]
 
             if (nrow(duplicate.df) == 1) next
-
         }
-
         # Choose entry with the most available data
         idx <- which.max(nchar(simplify_string(apply(duplicate.df,
                                                      1,
@@ -212,7 +210,6 @@ remove_matches_screened <- function(x, db_pref = NULL, ignore_IDs = NULL) {
         removal_ids <- duplicate.df[-idx, "internal_ID"]
         x <- x[!(x[, "internal_ID"] %in% removal_ids), ]
     }
-
     # Remove unique ID
     x$internal_ID <- NULL
     # Remove match_ID

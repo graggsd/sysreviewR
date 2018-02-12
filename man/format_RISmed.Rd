@@ -12,7 +12,7 @@ format_RISmed(x)
 \code{RISmed::EUtilsGet}}
 }
 \value{
-A \code{data.frame} containing information for each publicaiton from
+A \code{data.frame} containing information for each publication from
 the \code{RISmed} query
 }
 \description{
