@@ -16,7 +16,6 @@
 #' @seealso \code{\link{format_RISmed}}
 #' @examples
 #' \dontrun{
-#' library(RISmed)
 #' scopus_data <- read.csv("your_scopus_data.csv", stringsAsFactors = FALSE)
 #' form_s_data <- format_scopus(scopus_data)
 #' }
@@ -57,7 +56,7 @@ format_scopus.data.frame <- function(x) {
     }
 
     # Titles -----------------------------------------------
-    title_idx <- grep("Title\\>", colnames(x), ignore.case = TRUE)
+    title_idx <- grep("^Title", colnames(x), ignore.case = FALSE)
     if (length(title_idx) == 1) {
         # Change to upper case
         colnames(x)[title_idx] <- "TITLE"
@@ -81,7 +80,7 @@ format_scopus.data.frame <- function(x) {
     vol_idx <- grep("Volume", colnames(x), ignore.case = TRUE)
     if (length(vol_idx) == 1) {
         # Change to upper case
-        colnames(x)[vol_idx] <- "Volume"
+        colnames(x)[vol_idx] <- "VOLUME"
     }
 
     # Issue -----------------------------------------------
@@ -105,7 +104,7 @@ format_scopus.data.frame <- function(x) {
     }
 
     # Source -----------------------------------------------
-    source_idx <- grep("Source", colnames(x), ignore.case = TRUE)
+    source_idx <- grep("Source", colnames(x), ignore.case = FALSE)
     if (length(source_idx) == 1) {
         # Change name
         colnames(x)[source_idx] <- "DATABASE"
@@ -174,6 +173,8 @@ fl_auth_scopus <- function(x) {
 # Output: a matrix with first and last author last names and initials in four
 # columns; rows constitute different studies
 auth_matrix_scopus <- function(x, idx) {
-    x[, idx] <- pre_edit_auth_nms_scopus(x[, idx])
+    # I don't know where this function came from and haven't been able to find
+    # it
+    # x[, idx] <- pre_edit_auth_nms_scopus(x[, idx])
     return(t(sapply(x[, idx], fl_auth_scopus)))
 }
