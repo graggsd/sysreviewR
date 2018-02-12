@@ -22,7 +22,6 @@ from other sources.
 }
 \examples{
 \dontrun{
-library(RISmed)
 scopus_data <- read.csv("your_scopus_data.csv", stringsAsFactors = FALSE)
 form_s_data <- format_scopus(scopus_data)
 }
