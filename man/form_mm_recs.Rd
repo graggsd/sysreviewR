@@ -4,7 +4,7 @@
 \name{form_mm_recs}
 \alias{form_mm_recs}
 \title{Myeloma publications records formatted into a \code{data.frame}}
-\format{An object of class \code{data.frame} with 98 rows and 14 columns.}
+\format{An object of class \code{data.frame} with 50 rows and 14 columns.}
 \usage{
 form_mm_recs
 }

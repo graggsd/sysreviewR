@@ -13,51 +13,59 @@ simplify_string <- function(x) {
 # the pasted contents of the specified columns. Additionally, allows
 # string simplification. The purpose is to create a single column on which
 # to eventually compute string distances for the purpose of fuzzy matching.
-add_matching_col <- function(x, cols, simplify_match = TRUE) {
+add_matching_col <- function(x, match_cols, simplify_match = TRUE) {
 
-    if (simplify_match) {
-        x$matching_col <-
-            do.call(paste,
-                    data.frame(sapply(x[, cols], simplify_string)),
-                    sep = "")
+    # Add an empty match_ID to identify matching rows
+    x$match_ID <- NA
+
+    if(length(match_cols) > 1) {
+        x$matching_col <- apply(x[, match_cols], 1, paste0, collapse = "")
     } else {
-        x$matching_col <- do.call(paste, x[, cols], sep = "")
+        x$matching_col <- x[, match_cols]
     }
-
+    if (simplify_match) {
+        x$matching_col <- sapply(x$matching_col, simplify_string)
+    }
     return(x)
 }
 
 # Returns logical index indicating if row should be flagged based on a minimum
 # string length
-create_min_str_leng_idx <- function(x, cols, min_length) {
+protect_min_length <- function(x, match_cols, min_length) {
     # If only one length is provided, apply that length to the combined string
     # If more than one is provided, allow each value to be applied to the
     # appropriate column based upon position in the argument
     if (length(min_length) == 1) {
-        return(nchar(x[, "matching_col"] < min_length))
+        if(length(match_cols == 1)) {
+            idx <- nchar(x[, match_cols]) < min_length
+        } else {
+            idx <- nchar(apply(x[, match_cols], 1, paste0, collapse = "")) <
+                min_length
+        }
     } else if (length(min_length) > 1) {
-        if (length(min_length) != length(cols)) {
+        if (length(min_length) != length(match_cols)) {
             stop(paste0("min_length must be one of the following: set to NULL,",
-                        " of length one, or of the same length as cols."))
+                        " of length one, or of the same length as match_cols."))
         }
         # This will check to see that each entry in each column meets the
         # minimum number of characters specified in min_length, and will return
         # a logical index specifying any row that did not meet these
         # expectations
         sums <- rowSums(matrix(mapply(function(x, y) {nchar(x) < y},
-                                      x = as.matrix(x[, cols]),
-                                      y = sapply(min_length, rep, nrow(test))),
-                               nrow = nrow(test),
+                                      x = as.matrix(x[, match_cols]),
+                                      y = sapply(min_length, rep, nrow(x))),
+                               nrow = nrow(x),
                                byrow = FALSE))
-        return(sums > 0)
+        idx <- sums > 0
     }
+    x[idx, "match_ID"] <- paste0("m", 1:nrow(x))[idx]
+    return(x)
 }
-
 
 fuzzy_matching <- function(x, string_dist) {
 
     # Add an empty match_ID to identify matching rows
-    x$match_ID <- NA
+    # x$match_ID <- NA
     # Add an interal ID to uniquely identify rows for this function
     x$internal_ID <- 1:nrow(x)
 
@@ -88,21 +96,10 @@ fuzzy_matching <- function(x, string_dist) {
     return(x)
 }
 
-# test <- data.frame(match_ID = NA,
-#                    internal_ID = c(1, 2, 3),
-#                    matching_col = c("Apple", "Apple", "Apple"),
-#                    stringsAsFactors = FALSE)
-# test <- data.frame(match_ID = NA,
-#                    internal_ID = c(1, 2, 3),
-#                    matching_col = c("Apple", "Apple", "Pear"),
-#                    stringsAsFactors = FALSE)
-#
-# to_name(test, 0)
-
 strict_matching <- function(x) {
 
     # Add an empty match_ID to identify matching rows
-    x$match_ID <- NA
+    # x$match_ID <- NA
     # Add an interal ID to uniquely identify rows for this function
     x$internal_ID <- 1:nrow(x)
 
@@ -123,20 +120,20 @@ strict_matching <- function(x) {
     return(x)
 }
 
-add_match_ID <- function(x,
-                         cols,
-                         approx_match = FALSE,
-                         string_dist = 10,
-                         min_length = 20,
-                         simplify_match = TRUE) {
+#' @export
+find_duplicates <- function(x,
+                            match_cols,
+                            approx_match = FALSE,
+                            string_dist = 10,
+                            min_length = 20,
+                            simplify_match = TRUE) {
 
-    # Matching column -------------------------------
-    x <- add_matching_col(x, cols, simplify_match = simplify_match)
+    # Matching column ---------------------------------------------------
+    x <- add_matching_col(x, match_cols, simplify_match = simplify_match)
 
-    # Flag rows based on string length ----------------------------
+    # Flag rows based on string length ----------------------------------
     if (!is.null(min_length)) {
-        x[, "minimum_length_flag"] <-
-            create_min_str_leng_idx(x, cols, min_length)
+        x <- protect_min_length(x, match_cols, min_length)
     }
 
     # Add matching IDs based on exact or fuzzy matching -----------------
@@ -149,19 +146,23 @@ add_match_ID <- function(x,
     return(x)
 }
 
-get_matches <- function(x) {
-    matched_match_IDs <- unique(x[duplicated(x[, "match_ID"]), "match_ID"])
+get_dupe_m_id <- function(x) {
+    return(unique(x[duplicated(x[, "match_ID"]), "match_ID"]))
+}
+
+#' @export
+view_duplicates <- function(x) {
+    matched_match_IDs <- get_dupe_m_id(x)
     x <- x[x[,"match_ID"] %in% matched_match_IDs, ]
     idx <- order(x[, "match_ID"])
     return(x[idx,])
 }
 
-remove_matches_screened <- function(x, db_pref = NULL, ignore_IDs = NULL) {
+#' @export
+remove_duplicates <- function(x, db_pref = NULL, ignore_IDs = NULL) {
 
-    #########################
-    #########################
     # Remove matching column here
-    # Remove minimum length flag here
+    x$matching_col <- NULL
 
     # Add unique ID to x
     x$internal_ID <- 1:nrow(x)
@@ -171,7 +172,10 @@ remove_matches_screened <- function(x, db_pref = NULL, ignore_IDs = NULL) {
         db_search <- paste(db_pref, collapse = "|")
     }
 
-    duplicated_match_IDs <- unique(x$match_ID[duplicated(x$match_ID)])
+    # Get the match IDs of duplicates
+    duplicated_match_IDs <- get_dupe_m_id(x)
+
+    # Remove those IDs that have been manually specified
     if (!is.null(ignore_IDs)) {
         duplicated_match_IDs <- setdiff(duplicated_match_IDs, ignore_IDs)
     }
@@ -203,10 +207,7 @@ remove_matches_screened <- function(x, db_pref = NULL, ignore_IDs = NULL) {
             if (nrow(duplicate.df) == 1) next
         }
         # Choose entry with the most available data
-        idx <- which.max(nchar(simplify_string(apply(duplicate.df,
-                                                     1,
-                                                     paste,
-                                                     collapse = ""))))
+        idx <- which.min(rowSums(duplicate.df == "", na.rm = TRUE))
         removal_ids <- duplicate.df[-idx, "internal_ID"]
         x <- x[!(x[, "internal_ID"] %in% removal_ids), ]
     }
