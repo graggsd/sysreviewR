@@ -1,4 +1,4 @@
 library(testthat)
-library(sysrutils)
+library(sysreviewR)
 
-test_check("sysrutils")
+test_check("sysreviewR")
