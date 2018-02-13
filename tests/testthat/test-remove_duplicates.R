@@ -26,6 +26,7 @@ test_that("strict_matching works as expected", {
 })
 
 test_that("protect_min_length works for single columns", {
+    cols <- "TITLE"
     expect_equal(sum(is.na(protect_min_length(test_dat_2_match,
                                               cols, 1000)[, "match_ID"])),
                  0)
@@ -35,16 +36,6 @@ test_that("protect_min_length works for single columns", {
 })
 
 test_that("protect_min_length works for multiple columns", {
-    expect_equal(sum(is.na(protect_min_length(test_dat_2_match,
-                                              cols, 1000)[, "match_ID"])),
-                 0)
-    expect_equal(sum(is.na(protect_min_length(test_dat_2_match,
-                                              cols, 1)[, "match_ID"])),
-                 10)
-})
-
-
-test_that("add_min_len_flag evals length of multiple columns appropriately", {
     cols <- c("TITLE", "FIRSTAUTHLN")
     match_2_cols <- add_matching_col(test_dat, cols, TRUE)
     expect_equal(sum(is.na(protect_min_length(match_2_cols,
