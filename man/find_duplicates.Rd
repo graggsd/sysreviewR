@@ -8,39 +8,33 @@ find_duplicates(x, match_cols, approx_match = FALSE, string_dist = 10,
   min_length = 20, simplify_match = TRUE)
 }
 \arguments{
-\item{x}{A dataset in which duplicate entries will be identified}
+\item{x}{The dataset in which duplicate entries will be identified}
 
-\item{match_cols}{Column(s) that will be used to generate a search string for
-duplicate identification. If more than one column is
-specified, then the search string will be formed from the
-concatenation of values from column specified in \code{match_cols}.}
+\item{match_cols}{Column(s) that will be used to search for duplicate
+records}
 
-\item{approx_match}{If set to \code{TRUE}, performs a duplicate search using
-string distances rather than exact values.}
+\item{approx_match}{Whether to perform a duplicate search using
+string distances or exact values}
 
-\item{string_dist}{When performing approximate matching, is is the distance
-cutoff at which entries will be considered matched.}
+\item{string_dist}{When using approximate matching, the string
+distance cutoff at which records will be assumed duplicated}
 
-\item{min_length}{The minimum length for values in \code{match_cols}
-such that rows with \code{match_cols} shorter than the values specified by
-this argument will be protected from identification as a duplicate.
-This helps ensure that aberrant duplicates are not identified due to
-very short or empty values within \code{match_cols}.}
+\item{min_length}{The minimum string length for \code{match_cols} at which
+a record will be considered when searching for duplicates}
 
-\item{simplify_match}{If \code{TRUE}, modifies the matching string by
-removing all alpha-numeric characters and setting the remaining string to
-lower-case.}
+\item{simplify_match}{Whether to perform duplicate searches after removing
+all non alpha-numeric characters from the reference string generated from
+\code{match_cols}}
 }
 \value{
-An updated version of \code{x}, with extra columns specifying the
-final string used to search for duplicates (contained within a new column
-called \code{matching_col}) and a unique identifier for each set of
-duplicates (contained within a new column called \code{match_ID})
-that that will share the same value for any identified duplicates.
+An updated version of \code{x}, with one column specifying the
+final string used to search for duplicates (\code{matching_col})
+and another column containing unique identifiers for each set of
+duplicates (\code{match_ID}).
 }
 \description{
-Identifies duplicate entries in a set of tabular data using one or more
-columns, then labels matches by a unique match identifier.
+For a tabular set of publication records, identifies potential sets of
+duplicate entries and labels them with a unique identifier.
 }
 \examples{
 \dontrun{

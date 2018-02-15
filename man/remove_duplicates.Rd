@@ -12,19 +12,23 @@ remove_duplicates(x, db_pref = NULL, ignore_IDs = NULL)
 \item{db_pref}{The preferred database for a reference.}
 
 \item{ignore_IDs}{A set of match IDs that will be ignored when removing
-duplicate entries. These should be identified by manually inspecting
+duplicate records. These should be identified by manually inspecting
 the output of \code{return_duplicates_df}.}
 }
 \value{
-An updated version of \code{x}, with duplicate entries removed.
+An updated version of \code{x}, with duplicate records removed.
 }
 \description{
-After running \code{find_duplicates}, duplicate sets of entries will contain
-identical match IDs contained in the \code{match_ID} column. This
+Takes output of \code{find_duplicates}, and returns a set of records with
+duplicate entries removed.
+}
+\details{
+After running \code{find_duplicates}, duplicate sets of records will contain
+identical match IDs specified in the \code{match_ID} column. This
 function will remove all but one entry from each set of duplicates. The
-entry to be preserved is identified based on a combination of the
-preferred source database (if specified in \code{db_pref}) and/or the entry
-within the duplicate set with the least number of blank cells.
+preserved entry is selected based on the user's preferred database
+(\code{db_pref}) and the entry within the duplicate set with the
+least number of blank cells.
 }
 \examples{
 \dontrun{
