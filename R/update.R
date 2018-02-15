@@ -58,20 +58,24 @@ update_data.data.frame <- function(empty,
         idx <- get_matching_index_exact(empty, populated)
     }
 
-
     # Remove matches where the string length for the matching length is shorter
     # than desired
     idx <- remove_short_string_matches(idx, empty, min_length)
 
-    # Make sure there are not matches between rows in 'populated' and 'empty'.
-    # Send a warning for rows with multiple matches and remove the extra
-    # matches.
-    # Afterwards, make sure there are not duplicate refernces to a single
-    # row in populated for each row in empty
-    idx <- remove_multi_matches(idx)
+    if (sum(unlist(lapply(idx, length))) > 0) {
+        # Make sure there are not matches between rows in 'populated' and 'empty'.
+        # Send a warning for rows with multiple matches and remove the extra
+        # matches.
+        # Afterwards, make sure there are not duplicate refernces to a single
+        # row in populated for each row in empty
+        idx <- remove_multi_matches(idx)
 
-    # Take update empty with populated using the finalized index
-    final <- finalize_matches(empty, populated, idx)
+        # Take update empty with populated using the finalized index
+        final <- finalize_matches(empty, populated, idx)
+
+    } else {
+        final <- empty
+    }
 
     # Remove the internal columns
     final$match_ID <- NULL

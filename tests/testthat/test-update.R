@@ -19,8 +19,7 @@ expected_out <- data.frame(a = c("Apples", "Oranges", "Bananas"),
 
 test_that("exact matching works appropriately", {
 
-    expect_equal(update_dataframe(empty, update, c("a", "b")),
+    expect_equal(update_data(empty, update, c("a", "b"), min_length = 5),
                  expected_out)
 
 })
-
