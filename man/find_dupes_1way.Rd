@@ -40,5 +40,10 @@ set of records.
 }
 \examples{
 \dontrun{
+old <- form_mm_recs[1:10, ]
+new <- form_mm_recs[8:12, ]
+test <- find_dupes_1way(old, new, c(1, 3))
+dupes <- return_duplicates(test)
+out <- remove_dupes_1way(test)
 }
 }

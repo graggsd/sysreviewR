@@ -11,7 +11,7 @@ remove_dupes_1way(x, ignore_IDs = NULL)
 
 \item{ignore_IDs}{A set of match IDs that will be ignored when removing
 duplicate records. These should be identified by manually inspecting
-the output of \code{return_duplicates_df}.}
+the output of \code{return_duplicates}.}
 }
 \value{
 An updated version of \code{x}, with duplicate records removed.
@@ -29,5 +29,10 @@ set of records.
 }
 \examples{
 \dontrun{
+old <- form_mm_recs[1:10, ]
+new <- form_mm_recs[8:12, ]
+test <- find_dupes_1way(old, new, c(1, 3))
+dupes <- return_duplicates(test)
+out <- remove_dupes_1way(test)
 }
 }

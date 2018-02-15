@@ -38,5 +38,9 @@ duplicate entries and labels them with a unique identifier.
 }
 \examples{
 \dontrun{
+test <- rbind(form_mm_recs, form_mm_recs)
+test <- find_duplicates(test, c(1, 3))
+dupes <- return_duplicates(test)
+out <- remove_duplicates(test)
 }
 }

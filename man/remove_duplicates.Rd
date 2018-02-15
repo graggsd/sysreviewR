@@ -13,7 +13,7 @@ remove_duplicates(x, db_pref = NULL, ignore_IDs = NULL)
 
 \item{ignore_IDs}{A set of match IDs that will be ignored when removing
 duplicate records. These should be identified by manually inspecting
-the output of \code{return_duplicates_df}.}
+the output of \code{return_duplicates}.}
 }
 \value{
 An updated version of \code{x}, with duplicate records removed.
@@ -32,5 +32,9 @@ least number of blank cells.
 }
 \examples{
 \dontrun{
+test <- rbind(form_mm_recs, form_mm_recs)
+test <- find_duplicates(test, c(1, 3))
+dupes <- return_duplicates(test)
+out <- remove_duplicates(test)
 }
 }

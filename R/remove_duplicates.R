@@ -21,6 +21,10 @@
 #' duplicates (\code{match_ID}).
 #' @examples
 #' \dontrun{
+#' test <- rbind(form_mm_recs, form_mm_recs)
+#' test <- find_duplicates(test, c(1, 3))
+#' dupes <- return_duplicates(test)
+#' out <- remove_duplicates(test)
 #' }
 #' @export
 find_duplicates <- function(x,
@@ -77,19 +81,23 @@ find_duplicates.data.frame <- function(x,
 #' \code{ignore_IDs} argument.
 #' @examples
 #' \dontrun{
+#' test <- rbind(form_mm_recs, form_mm_recs)
+#' test <- find_duplicates(test, c(1, 3))
+#' dupes <- return_duplicates(test)
+#' out <- remove_duplicates(test)
 #' }
 #' @export
-return_duplicates_df <- function(x) {
-    UseMethod("return_duplicates_df")
+return_duplicates <- function(x) {
+    UseMethod("return_duplicates")
 }
 
 #' @export
-return_duplicates_df.default <- function(x, ...) {
+return_duplicates.default <- function(x, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-return_duplicates_df.data.frame <- function(x) {
+return_duplicates.data.frame <- function(x) {
     matched_match_IDs <- get_dupe_m_id(x)
     x <- x[x[,"match_ID"] %in% matched_match_IDs, ]
     idx <- order(x[, "match_ID"])
@@ -112,10 +120,14 @@ return_duplicates_df.data.frame <- function(x) {
 #' @param db_pref The preferred database for a reference.
 #' @param ignore_IDs A set of match IDs that will be ignored when removing
 #' duplicate records. These should be identified by manually inspecting
-#' the output of \code{return_duplicates_df}.
+#' the output of \code{return_duplicates}.
 #' @return An updated version of \code{x}, with duplicate records removed.
 #' @examples
 #' \dontrun{
+#' test <- rbind(form_mm_recs, form_mm_recs)
+#' test <- find_duplicates(test, c(1, 3))
+#' dupes <- return_duplicates(test)
+#' out <- remove_duplicates(test)
 #' }
 #' @export
 remove_duplicates <- function(x, db_pref = NULL, ignore_IDs = NULL) {

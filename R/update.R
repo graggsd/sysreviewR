@@ -19,6 +19,19 @@
 #' matches to \code{populated} (based on \code{match_cols}) are made.
 #' @examples
 #' \dontrun{
+#' empty <- data.frame(a = c("Apples", "Oranges", "Bananas"),
+#'                     b = c("Granny", "Florida", "Chiquita"),
+#'                     c = c("", "", ""),
+#'                     d = c("", "", ""),
+#'                     stringsAsFactors = FALSE)
+#'
+#' update <- data.frame(a = c("Apples", "Oranges"),
+#'                      b = c("Granny", "Florida"),
+#'                      c = c("Red", ""),
+#'                      d = c("Green", ""),
+#'                      stringsAsFactors = FALSE)
+#'
+#' update_data(empty, update, c("a", "b"), min_length = 5)
 #' }
 #' @export
 update_data <- function(empty,
