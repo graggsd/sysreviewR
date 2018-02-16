@@ -45,7 +45,7 @@ update_data <- function(empty,
 }
 
 #' @export
-update_data.default <- function(x, ...) {
+update_data.default <- function(empty, ...) {
     stop("x must be of class data.frame")
 }
 
