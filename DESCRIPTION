@@ -1,12 +1,11 @@
 Package: sysreviewR
-Type: Package
-Title: What the Package Does (Title Case)
+Title: Facilitates Management of Publication Records for Systematic Review
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-Depends: R (>= 2.10)
+Authors@R: person("Stephen", "Gragg", email = "graggsd@uab.edu",
+                  role = c("aut", "cre"))
+Description: This package provides functions to manage publication records 
+    during the course of a systematic review.
+Depends: R (>= 3.4.2)
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
