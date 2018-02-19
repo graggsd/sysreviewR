@@ -15,6 +15,7 @@
 #' a record will be considered when matching records.
 #' @param simplify_match Whether to perform matching on strings composed from
 #' \code{match_cols}, but with non alpha-numeric values removed.
+#' @param replace_cols Column(s) to replace in \code{empty}
 #' @return An updated version of \code{empty}, which will be updated where
 #' matches to \code{populated} (based on \code{match_cols}) are made.
 #' @examples
@@ -40,7 +41,8 @@ update_data <- function(empty,
                         approx_match = FALSE,
                         string_dist = 10,
                         min_length = 20,
-                        simplify_match = TRUE) {
+                        simplify_match = TRUE,
+                        replace_cols = NULL) {
     UseMethod("update_data")
 }
 
@@ -56,7 +58,8 @@ update_data.data.frame <- function(empty,
                                    approx_match = FALSE,
                                    string_dist = 10,
                                    min_length = 20,
-                                   simplify_match = TRUE) {
+                                   simplify_match = TRUE,
+                                   replace_cols = NULL) {
 
     # Make matching columns for both the blank dataset and the one that will
     # be used to update it.
@@ -84,7 +87,7 @@ update_data.data.frame <- function(empty,
         idx <- remove_multi_matches(idx)
 
         # Take update empty with populated using the finalized index
-        final <- finalize_matches(empty, populated, idx)
+        final <- finalize_matches(empty, populated, idx, replace_cols)
 
     } else {
         final <- empty
@@ -128,7 +131,7 @@ remove_multi_matches <- function(idx) {
             idx[[i]] <- idx[[i]][1]
         }
     }
-    duplicated_idx <- which(duplicated(idx))
+    duplicated_idx <- which(duplicated(idx) & (sapply(idx, length) > 0))
     if (length(duplicated_idx) > 0) {
         warning(paste0("Duplicate matches in rows of 'empty' detected.",
                        " Will only match first instance of each reference",
@@ -148,10 +151,14 @@ remove_short_string_matches <- function(idx, empty, min_length) {
     return(idx)
 }
 
-finalize_matches <- function(empty, populated, idx) {
+finalize_matches <- function(empty, populated, idx, replace_cols = NULL) {
+
+    if (is.null(replace_cols)) {
+        replace_cols <- 1:ncol(empty)
+    }
     for (i in 1:length(idx)) {
         if (length(idx[[i]]) > 0) {
-            empty[i, ] <- populated[idx[[i]], ]
+            empty[i, replace_cols] <- populated[idx[[i]], replace_cols]
         }
     }
     return(empty)
