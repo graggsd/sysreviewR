@@ -1,4 +1,4 @@
-context("test-remove_duplicates.R")
+context("test-dupes.R")
 test_dat <- form_mm_recs[1:5, c(1, 3, 4)]
 
 test_dat_2 <- rbind(test_dat, test_dat)
