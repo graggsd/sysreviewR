@@ -1,15 +1,15 @@
 #' Remove previously documented publication records
 #'
-#' Takes output of \code{find_dupes_1way}, and returns a set of combined records
+#' Takes output of \code{dupes_find_1way}, and returns a set of combined records
 #' with duplicate entries removed.
 #'
-#' After running \code{find_dupes_1way}, records from \code{old} and \code{new}
+#' After running \code{dupes_find_1way}, records from \code{old} and \code{new}
 #' are combined and pairs of entries matched between \code{old} and \code{new}
 #' are marked with identical match IDs specified in the \code{match_ID} column.
 #' This function removes the duplicate entry that originated from the \code{new}
 #' set of records.
 #'
-#' @param x The output of \code{find_dupes_1way}
+#' @param x The output of \code{dupes_find_1way}
 #' @param ignore_IDs A set of match IDs that will be ignored when removing
 #' duplicate records. These should be identified by manually inspecting
 #' the output of \code{dupes_return}.
@@ -18,22 +18,22 @@
 #' \dontrun{
 #' old <- form_mm_recs[1:10, ]
 #' new <- form_mm_recs[8:12, ]
-#' test <- find_dupes_1way(old, new, c(1, 3))
+#' test <- dupes_find_1way(old, new, c(1, 3))
 #' dupes <- dupes_return(test)
-#' out <- remove_dupes_1way(test)
+#' out <- dupes_rm_1way(test)
 #' }
 #' @export
-remove_dupes_1way <- function(x, ignore_IDs = NULL) {
-    UseMethod("remove_dupes_1way")
+dupes_rm_1way <- function(x, ignore_IDs = NULL) {
+    UseMethod("dupes_rm_1way")
 }
 
 #' @export
-remove_dupes_1way.default <- function(x, ...) {
+dupes_rm_1way.default <- function(x, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-remove_dupes_1way.data.frame <- function(x, ignore_IDs = NULL) {
+dupes_rm_1way.data.frame <- function(x, ignore_IDs = NULL) {
     old_matchIDs <- x$match_ID[!x$is_new]
     x <- x[!(x$is_new & (x$match_ID %in% old_matchIDs)), ]
     x[, c("match_ID", "matching_col", "is_new")] <- NULL
@@ -67,28 +67,28 @@ remove_dupes_1way.data.frame <- function(x, ignore_IDs = NULL) {
 #' \dontrun{
 #' old <- form_mm_recs[1:10, ]
 #' new <- form_mm_recs[8:12, ]
-#' test <- find_dupes_1way(old, new, c(1, 3))
+#' test <- dupes_find_1way(old, new, c(1, 3))
 #' dupes <- dupes_return(test)
-#' out <- remove_dupes_1way(test)
+#' out <- dupes_rm_1way(test)
 #' }
 #' @export
-find_dupes_1way <- function(old,
+dupes_find_1way <- function(old,
                             new,
                             match_cols,
                             approx_match = FALSE,
                             string_dist = 10,
                             min_length = 20,
                             simplify_match = TRUE) {
-    UseMethod("find_dupes_1way")
+    UseMethod("dupes_find_1way")
 }
 
 #' @export
-find_dupes_1way.default <- function(old, new, ...) {
+dupes_find_1way.default <- function(old, new, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-find_dupes_1way.data.frame <- function(old,
+dupes_find_1way.data.frame <- function(old,
                                        new,
                                        match_cols,
                                        approx_match = FALSE,

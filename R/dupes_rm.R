@@ -24,7 +24,7 @@
 #' test <- rbind(form_mm_recs, form_mm_recs)
 #' test <- dupes_find(test, c(1, 3))
 #' dupes <- dupes_return(test)
-#' out <- remove_dupes(test)
+#' out <- dupes_rm(test)
 #' }
 #' @export
 dupes_find <- function(x,
@@ -76,15 +76,15 @@ dupes_find.data.frame <- function(x,
 #' @return A \code{data.frame} containing only entries of the original dataset
 #' identified as duplicate entries. This is meant to facilitate manual
 #' inspection of potential duplicates. Aberrantly identified duplicates
-#' may subsequently be spared when running \code{remove_dupes}
-#' by indicating their match IDs in \code{remove_dupes}'s
+#' may subsequently be spared when running \code{dupes_rm}
+#' by indicating their match IDs in \code{dupes_rm}'s
 #' \code{ignore_IDs} argument.
 #' @examples
 #' \dontrun{
 #' test <- rbind(form_mm_recs, form_mm_recs)
 #' test <- dupes_find(test, c(1, 3))
 #' dupes <- dupes_return(test)
-#' out <- remove_dupes(test)
+#' out <- dupes_rm(test)
 #' }
 #' @export
 dupes_return <- function(x) {
@@ -127,20 +127,20 @@ dupes_return.data.frame <- function(x) {
 #' test <- rbind(form_mm_recs, form_mm_recs)
 #' test <- dupes_find(test, c(1, 3))
 #' dupes <- dupes_return(test)
-#' out <- remove_dupes(test)
+#' out <- dupes_rm(test)
 #' }
 #' @export
-remove_dupes <- function(x, db_pref = NULL, ignore_IDs = NULL) {
-    UseMethod("remove_dupes")
+dupes_rm <- function(x, db_pref = NULL, ignore_IDs = NULL) {
+    UseMethod("dupes_rm")
 }
 
 #' @export
-remove_dupes.default <- function(x, ...) {
+dupes_rm.default <- function(x, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-remove_dupes.data.frame <- function(x, db_pref = NULL, ignore_IDs = NULL) {
+dupes_rm.data.frame <- function(x, db_pref = NULL, ignore_IDs = NULL) {
 
     # Remove matching column here
     x$matching_col <- NULL

@@ -41,6 +41,6 @@ duplicate entries and labels them with a unique identifier.
 test <- rbind(form_mm_recs, form_mm_recs)
 test <- dupes_find(test, c(1, 3))
 dupes <- dupes_return(test)
-out <- remove_dupes(test)
+out <- dupes_rm(test)
 }
 }
