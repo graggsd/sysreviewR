@@ -61,8 +61,8 @@ test_that("update_data approximate matching works appropriately", {
                           stringsAsFactors = FALSE)
     expected_out2 <- data.frame(a = c("Apples", "Oranges", "Bananas"),
                                b = c("Granny", "Florida", "Chiquita"),
-                               c = c("Red", "", ""),
-                               d = c("Green", "", ""),
+                               c = c("", "", ""),
+                               d = c("", "", ""),
                                stringsAsFactors = FALSE)
 
     # Works for exact matches
@@ -89,10 +89,11 @@ test_that("update_data approximate matching works appropriately", {
     expect_equal(update_data(empty = empty,
                              populated = update2,
                              match_cols = c("a", "b"),
-                             min_length = 5,
+                             min_length = 13,
                              replace_cols = c("c", "d"),
-                             string_dist = 1,
+                             string_dist = 3,
                              approx_match = TRUE),
                  expected_out2)
 
 })
+
