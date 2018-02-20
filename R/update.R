@@ -123,8 +123,8 @@ get_matching_index_approx <- function(empty, populated, string_dist) {
 remove_multi_matches <- function(idx) {
     multi_match_idx <- which(sapply(idx, length) > 1)
     if (length(multi_match_idx) > 0) {
-        warning(paste0("Rows ",
-                       paste(which(multi_match_idx), sep = ", "),
+        warning(paste0("Row(s) ",
+                       paste(multi_match_idx, collapse = ", "),
                        " of 'empty' have multiple matches to rows in ",
                        "'populated'. Using only the first match."))
         for (i in multi_match_idx) {
