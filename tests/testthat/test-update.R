@@ -28,9 +28,9 @@ test_that("update_data exact matching works appropriately", {
                                 d = c("", "", ""),
                                 stringsAsFactors = FALSE)
 
-    expect_equal(update_data(empty, update, c("a", "b"), min_length = 5),
+    expect_equal(update_data(empty, update, c("a", "b"), c("c", "d"), min_length = 5),
                  expected_out)
-    expect_equal(update_data(empty, update2, c("a", "b"), min_length = 5),
+    expect_equal(update_data(empty, update2, c("a", "b"), c("c", "d"), min_length = 5),
                  expected_out2)
 
 })
@@ -42,7 +42,7 @@ test_that("update_data protects short matching strings", {
                                d = c("", "", ""),
                                stringsAsFactors = FALSE)
 
-    expect_equal(update_data(empty, update, c("a", "b"), min_length = 13),
+    expect_equal(update_data(empty, update, c("a", "b"), c("c", "d"), min_length = 13),
                  expected_out)
 
 })
