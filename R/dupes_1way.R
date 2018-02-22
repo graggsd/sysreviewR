@@ -76,7 +76,7 @@ dupes_find_1way <- function(old,
                             new,
                             match_cols,
                             approx_match = FALSE,
-                            string_dist = 10,
+                            string_dist = 5,
                             min_length = 20,
                             simplify_match = TRUE) {
     UseMethod("dupes_find_1way")

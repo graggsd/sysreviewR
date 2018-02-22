@@ -30,7 +30,7 @@
 dupes_find <- function(x,
                             match_cols,
                             approx_match = FALSE,
-                            string_dist = 10,
+                            string_dist = 5,
                             min_length = 20,
                             simplify_match = TRUE) {
     UseMethod("dupes_find")
@@ -45,7 +45,7 @@ dupes_find.default <- function(x, ...) {
 dupes_find.data.frame <- function(x,
                                        match_cols,
                                        approx_match = FALSE,
-                                       string_dist = 10,
+                                       string_dist = 5,
                                        min_length = 20,
                                        simplify_match = TRUE) {
 
