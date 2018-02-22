@@ -4,7 +4,7 @@
 \alias{dupes_find}
 \title{Identify duplicate entries}
 \usage{
-dupes_find(x, match_cols, approx_match = FALSE, string_dist = 10,
+dupes_find(x, match_cols, approx_match = FALSE, string_dist = 5,
   min_length = 20, simplify_match = TRUE)
 }
 \arguments{
