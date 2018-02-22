@@ -19,8 +19,9 @@ string distances or exact values}
 \item{string_dist}{When using approximate matching, the string
 distance cutoff at which records will be assumed duplicated}
 
-\item{min_length}{The minimum string length for \code{match_cols} at which
-a record will be considered when searching for duplicates}
+\item{min_length}{The minimum length for the combined matching string
+produced by \code{match_cols} at which a record will be considered for
+matching}
 
 \item{simplify_match}{Whether to perform duplicate searches after removing
 all non alpha-numeric characters from the reference string generated from
