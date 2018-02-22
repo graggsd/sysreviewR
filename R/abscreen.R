@@ -10,27 +10,26 @@
 #' screen abstracts
 #' @examples
 #' \dontrun{
-#' screening_list <- abscreen_make_list(form_mm_recs, c("you", "me"))
+#' screening_list <- screen_make_list(form_mm_recs, c("you", "me"))
 #' }
 #' @export
-abscreen_make_list <- function(x,
-                                reviewers,
-                                title_col = "TITLE",
-                                abstract_col = "ABSTRACT") {
-    UseMethod("abscreen_make_list")
+screen_make_list <- function(x,
+                               reviewers,
+                               title_col = "TITLE",
+                               abstract_col = "ABSTRACT") {
+    UseMethod("screen_make_list")
 }
 
-
 #' @export
-abscreen_make_list.default <- function(x, ...) {
+screen_make_list.default <- function(x, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-abscreen_make_list.data.frame <- function(x,
-                                           reviewers,
-                                           title_col = "TITLE",
-                                           abstract_col = "ABSTRACT") {
+screen_make_list.data.frame <- function(x,
+                                          reviewers,
+                                          title_col = "TITLE",
+                                          abstract_col = "ABSTRACT") {
 
     base_sheet <- data.frame(SCREENING_ID = 1:nrow(x),
                              x[, c(title_col, abstract_col)],
@@ -48,20 +47,20 @@ abscreen_make_list.data.frame <- function(x,
 
 #' Create .csv files for abstract screening
 #'
-#' Takes a the output of \code{abscreen_make_list} and creates a series of
+#' Takes a the output of \code{screen_make_list} and creates a series of
 #' .csv files that may be distributed to the individuals that will screen
 #' abstracts
 #'
-#' @param x The list created by \code{abscreen_make_list}
+#' @param x The list created by \code{screen_make_list}
 #' @param dir The desired directory into which .csv files will be placed
 #' @return NULL
 #' @examples
 #' \dontrun{
-#' screening_list <- abscreen_make_list(form_mm_recs, c("you", "me"))
-#' abscreen_write(screening_list, dir = "./")
+#' screening_list <- screen_make_list(form_mm_recs, c("you", "me"))
+#' screen_write(screening_list, dir = "./")
 #' }
 #' @export
-abscreen_write <- function(x, dir = "../intermediate_data/") {
+screen_write <- function(x, dir = "../intermediate_data/") {
     for (reviewer in names(x)) {
         write.csv(x[[reviewer]],
                   file = paste0(dir, "AbstScreener_", reviewer, ".csv"),
@@ -77,18 +76,18 @@ abscreen_write <- function(x, dir = "../intermediate_data/") {
 #' @param dir The directory containing complete screening forms
 #' @param ref_table The original set of records from which screening sheets
 #' were collected. Note: this must be unaltered from the point at which
-#' screening forms were first generated with \code{abscreen_make_list}.
+#' screening forms were first generated with \code{screen_make_list}.
 #' @return A \code{data.frame} with the combined results of all screening
 #' sheets, plus the publication data from \code{ref_table}
 #' @examples
 #' \dontrun{
-#' screening_list <- abscreen_make_list(form_mm_recs, c("you", "me"))
-#' abscreen_write(screening_list, dir = "./")
+#' screening_list <- screen_make_list(form_mm_recs, c("you", "me"))
+#' screen_write(screening_list, dir = "./")
 #' # Abstracts should be screened at this point
-#' combined_screening_forms <- abscreen_read("./", form_mm_recs)
+#' combined_screening_forms <- screen_read("./", form_mm_recs)
 #' }
 #' @export
-abscreen_read <- function(dir = "../intermediate_data/", ref_table) {
+screen_read <- function(dir = "../intermediate_data/", ref_table) {
     ref_table[, "SCREENING_ID"] <- 1:nrow(ref_table)
     files <- paste0(dir, list.files(path = dir, pattern = "AbstScreener"))
     abs_scr_list <-
