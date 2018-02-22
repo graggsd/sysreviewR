@@ -40,7 +40,7 @@ update_data <- function(empty,
                         match_cols,
                         replace_cols,
                         approx_match = FALSE,
-                        string_dist = 10,
+                        string_dist = 1,
                         min_length = 20,
                         simplify_match = TRUE) {
     UseMethod("update_data")
@@ -149,7 +149,7 @@ check_col_args_update <- function(match_cols, empty, populated) {
             stop(paste0("If match_cols is a list, both elements of match_cols ",
                         "must be of the same length"))
         }
-        if (class(match_cols[[1]]) == "numeric") {
+        if (class(match_cols[[1]]) %in% c("numeric", "integer")) {
             if(sum(!(match_cols[[1]] %in% 1:ncol(empty))) != 0 |
                sum(!(match_cols[[2]] %in% 1:ncol(populated))) != 0) {
                 stop(paste0("Numeric indices within the first and second",
@@ -167,7 +167,7 @@ check_col_args_update <- function(match_cols, empty, populated) {
             stop(paste0("Each element of match_cols must be of class ",
                         "'character' or 'numeric'"))
         }
-    } else if (class(match_cols) == "numeric") {
+    } else if (class(match_cols) %in% c("numeric", "integer")) {
         if (sum(!(match_cols %in% 1:ncol(empty))) != 0 |
             sum(!(match_cols %in% 1:ncol(populated))) != 0) {
             stop(paste0("Numeric indices specified by match_cols",
