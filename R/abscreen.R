@@ -101,6 +101,6 @@ abscreen_read <- function(dir = "../intermediate_data/", ref_table) {
     return(
         purrr::reduce(abs_scr_list, dplyr::full_join, by = "SCREENING_ID") %>%
             dplyr::full_join(ref_table, by = "SCREENING_ID") %>%
-            select(-SCREENING_ID)
+            dplyr::select(-SCREENING_ID)
     )
 }
