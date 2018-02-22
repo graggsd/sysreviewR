@@ -28,10 +28,71 @@ test_that("update_data exact matching works appropriately", {
                                 d = c("", "", ""),
                                 stringsAsFactors = FALSE)
 
-    expect_equal(update_data(empty, update, c("a", "b"), c("c", "d"), min_length = 5),
-                 expected_out)
-    expect_equal(update_data(empty, update2, c("a", "b"), c("c", "d"), min_length = 5),
+    expect_equivalent(
+        update_data(empty = empty,
+                    populated = update,
+                    match_cols = c("a", "b"),
+                    replace_cols = c("c", "d"),
+                    min_length = 5),
+        update_data(empty = empty,
+                    populated = update,
+                    match_cols = 1:2,
+                    replace_cols = 3:4,
+                    min_length = 5),
+        expected_out)
+
+    expect_equal(update_data(empty = empty,
+                             populated = update2,
+                             match_cols = c("a", "b"),
+                             replace_cols = c("c", "d"),
+                             min_length = 5),
                  expected_out2)
+
+})
+
+test_that("update_data's match_cols argument may be specified separately for empty and populated", {
+    expected_out <- data.frame(a = c("Apples", "Oranges", "Bananas"),
+                               b = c("Granny", "Florida", "Chiquita"),
+                               c = c("Red", "", ""),
+                               d = c("Green", "", ""),
+                               stringsAsFactors = FALSE)
+    update2 <- update
+    colnames(update2) <- c("d", "c", "b", "a")
+
+    expect_equivalent(update_data(empty = empty,
+                                  populated = update2,
+                                  match_cols = list(c("a", "b"), c("d", "c")),
+                                  replace_cols = 3:4,
+                                  min_length = 5),
+                      update_data(empty = empty,
+                                  populated = update2,
+                                  match_cols = list(1:2, 1:2),
+                                  replace_cols = 3:4,
+                                  min_length = 5),
+                      expected_out)
+
+})
+
+test_that("update_data's replace_cols argument may be specified separately for empty and populated", {
+    expected_out <- data.frame(a = c("Apples", "Oranges", "Bananas"),
+                               b = c("Granny", "Florida", "Chiquita"),
+                               c = c("Red", "", ""),
+                               d = c("Green", "", ""),
+                               stringsAsFactors = FALSE)
+    update2 <- update
+    colnames(update2) <- c("d", "c", "b", "a")
+
+    expect_equivalent(update_data(empty = empty,
+                                  populated = update2,
+                                  match_cols = 1:2,
+                                  replace_cols = list(3:4, 3:4),
+                                  min_length = 5),
+                      update_data(empty = empty,
+                                  populated = update2,
+                                  match_cols = list(1:2, 1:2),
+                                  replace_cols = list(c("c", "d"), c("b", "a")),
+                                  min_length = 5),
+                      expected_out)
 
 })
 
