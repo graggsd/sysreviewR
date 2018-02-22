@@ -14,9 +14,9 @@
 #' }
 #' @export
 screen_make_list <- function(x,
-                               reviewers,
-                               title_col = "TITLE",
-                               abstract_col = "ABSTRACT") {
+                             reviewers,
+                             title_col = "TITLE",
+                             abstract_col = "ABSTRACT") {
     UseMethod("screen_make_list")
 }
 
@@ -31,9 +31,7 @@ screen_make_list.data.frame <- function(x,
                                           title_col = "TITLE",
                                           abstract_col = "ABSTRACT") {
 
-    base_sheet <- data.frame(SCREENING_ID = 1:nrow(x),
-                             x[, c(title_col, abstract_col)],
-                             stringsAsFactors = FALSE)
+    base_sheet <- x[, c("UNIQUE_ID", title_col, abstract_col)]
     idx <- na.omit(match(c(title_col, abstract_col), colnames(base_sheet)))
     colnames(base_sheet)[idx] <- c("TITLE", "ABSTRACT")
     out <- lapply(reviewers,
@@ -88,7 +86,6 @@ screen_write <- function(x, dir = "../intermediate_data/") {
 #' }
 #' @export
 screen_read <- function(dir = "../intermediate_data/", ref_table) {
-    ref_table[, "SCREENING_ID"] <- 1:nrow(ref_table)
     files <- paste0(dir, list.files(path = dir, pattern = "AbstScreener"))
     abs_scr_list <-
         lapply(files,
@@ -98,8 +95,8 @@ screen_read <- function(dir = "../intermediate_data/", ref_table) {
                    out <- out[, -idx]
                })
     return(
-        purrr::reduce(abs_scr_list, dplyr::full_join, by = "SCREENING_ID") %>%
-            dplyr::full_join(ref_table, by = "SCREENING_ID") %>%
+        purrr::reduce(abs_scr_list, dplyr::full_join, by = "UNIQUE_ID") %>%
+            dplyr::full_join(ref_table, by = "UNIQUE_ID") %>%
             dplyr::select(-SCREENING_ID)
     )
 }
