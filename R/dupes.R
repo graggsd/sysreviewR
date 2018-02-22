@@ -10,8 +10,9 @@
 #' string distances or exact values
 #' @param string_dist When using approximate matching, the string
 #' distance cutoff at which records will be assumed duplicated
-#' @param min_length The minimum string length for \code{match_cols} at which
-#' a record will be considered when searching for duplicates
+#' @param min_length The minimum length for the combined matching string
+#' produced by \code{match_cols} at which a record will be considered for
+#' matching
 #' @param simplify_match Whether to perform duplicate searches after removing
 #' all non alpha-numeric characters from the reference string generated from
 #' \code{match_cols}
@@ -57,7 +58,7 @@ dupes_find.data.frame <- function(x,
 
     # Flag rows based on string length ----------------------------------
     if (!is.null(min_length)) {
-        x <- protect_min_length(x, match_cols, min_length)
+        x <- protect_min_length(x, min_length)
     }
 
     # Add matching IDs based on exact or fuzzy matching -----------------
@@ -240,34 +241,12 @@ add_matching_col <- function(x, match_cols, simplify_match = TRUE) {
 
 # Returns logical index indicating if row should be flagged based on a minimum
 # string length
-protect_min_length <- function(x, match_cols, min_length) {
-    # If only one length is provided, apply that length to the combined string
-    # If more than one is provided, allow each value to be applied to the
-    # appropriate column based upon position in the argument
-    if (length(min_length) == 1) {
-        if(length(match_cols == 1)) {
-            idx <- nchar(x[, match_cols]) < min_length
-        } else {
-            idx <- nchar(apply(x[, match_cols], 1, paste0, collapse = "")) <
-                min_length
-        }
-    } else if (length(min_length) > 1) {
-        if (length(min_length) != length(match_cols)) {
-            stop(paste0("min_length must be one of the following: set to NULL,",
-                        " of length one, or of the same length as match_cols."))
-        }
-        # This will check to see that each entry in each column meets the
-        # minimum number of characters specified in min_length, and will return
-        # a logical index specifying any row that did not meet these
-        # expectations
-        sums <- rowSums(matrix(mapply(function(x, y) {nchar(x) < y},
-                                      x = as.matrix(x[, match_cols]),
-                                      y = sapply(min_length, rep, nrow(x))),
-                               nrow = nrow(x),
-                               byrow = FALSE))
-        idx <- sums > 0
+protect_min_length <- function(x, min_length) {
+
+    idx <- which(nchar(x$matching_col) < min_length)
+    if (length(idx) > 0) {
+        x[idx, "match_ID"] <- paste0("m", 1:nrow(x))[idx]
     }
-    x[idx, "match_ID"] <- paste0("m", 1:nrow(x))[idx]
     return(x)
 }
 
