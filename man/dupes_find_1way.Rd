@@ -5,7 +5,7 @@
 \title{Identify previously documented publication records}
 \usage{
 dupes_find_1way(old, new, match_cols, approx_match = FALSE, string_dist = 5,
-  min_length = 20, simplify_match = TRUE)
+  min_length = 10, simplify_match = TRUE)
 }
 \arguments{
 \item{old}{The previous set of publication records}

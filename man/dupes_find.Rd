@@ -5,7 +5,7 @@
 \title{Identify duplicate entries}
 \usage{
 dupes_find(x, match_cols, approx_match = FALSE, string_dist = 5,
-  min_length = 20, simplify_match = TRUE)
+  min_length = 10, simplify_match = TRUE)
 }
 \arguments{
 \item{x}{The dataset in which duplicate entries will be identified}

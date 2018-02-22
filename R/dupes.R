@@ -32,7 +32,7 @@ dupes_find <- function(x,
                             match_cols,
                             approx_match = FALSE,
                             string_dist = 5,
-                            min_length = 20,
+                            min_length = 10,
                             simplify_match = TRUE) {
     UseMethod("dupes_find")
 }
@@ -47,7 +47,7 @@ dupes_find.data.frame <- function(x,
                                        match_cols,
                                        approx_match = FALSE,
                                        string_dist = 5,
-                                       min_length = 20,
+                                       min_length = 10,
                                        simplify_match = TRUE) {
 
     # Remove the unique ID
