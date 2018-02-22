@@ -49,6 +49,9 @@ dupes_find.data.frame <- function(x,
                                        min_length = 20,
                                        simplify_match = TRUE) {
 
+    # Remove the unique ID
+    x[, "UNIQUE_ID"] <- NULL
+
     # Matching column ---------------------------------------------------
     x <- add_matching_col(x, match_cols, simplify_match = simplify_match)
 
@@ -145,7 +148,7 @@ dupes_rm.data.frame <- function(x, db_pref = NULL, ignore_IDs = NULL) {
     # Remove matching column here
     x$matching_col <- NULL
 
-    # Add unique ID to x
+    # Add internal ID to x
     x$internal_ID <- 1:nrow(x)
 
     # Create a search variable if database precedence is specified
@@ -191,10 +194,13 @@ dupes_rm.data.frame <- function(x, db_pref = NULL, ignore_IDs = NULL) {
         removal_ids <- duplicate.df[-idx, "internal_ID"]
         x <- x[!(x[, "internal_ID"] %in% removal_ids), ]
     }
-    # Remove unique ID
+    # Remove internal ID
     x$internal_ID <- NULL
     # Remove match_ID
     x$match_ID <- NULL
+    # Add a unique identifier that will allow the output to be used as
+    # a reference for future tables
+    x$UNIQUE_ID <- 1:nrow(x)
 
     return(x)
 }
