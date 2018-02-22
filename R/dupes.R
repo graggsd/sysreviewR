@@ -200,7 +200,9 @@ dupes_rm.data.frame <- function(x, db_pref = NULL, ignore_IDs = NULL) {
     x$match_ID <- NULL
     # Add a unique identifier that will allow the output to be used as
     # a reference for future tables
-    x$UNIQUE_ID <- 1:nrow(x)
+    x <- data.frame(UNIQUE_ID = 1:nrow(x),
+                    x,
+                    stringsAsFactors = FALSE)
 
     return(x)
 }
