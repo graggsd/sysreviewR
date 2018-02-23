@@ -97,7 +97,7 @@ screen_fulltxt_list.data.frame <- function(x,
 #' @export
 screen_write <- function(x, dir = "../intermediate_data/") {
     for (reviewer in names(x)) {
-        write.csv(x[[reviewer]],
+        utils::write.csv(x[[reviewer]],
                   file = paste0(dir, "AbstScreener_", reviewer, ".csv"),
                   row.names = FALSE)
     }
@@ -133,7 +133,7 @@ screen_read <- function(dir = "../intermediate_data/", ref_table) {
     abs_scr_list <-
         lapply(files,
                function(x) {
-                   out <- read.csv(x, stringsAsFactors = FALSE)
+                   out <- utils::read.csv(x, stringsAsFactors = FALSE)
                    idx <- which(colnames(out) %in% keeper_cols)
                    out <- out[, idx]
                })
