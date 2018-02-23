@@ -7,18 +7,18 @@
 screen_write(x, dir = "../intermediate_data/")
 }
 \arguments{
-\item{x}{The list created by \code{screen_abst_list}}
+\item{x}{The list created by \code{screen_list_abst}}
 
 \item{dir}{The desired directory into which .csv files will be placed}
 }
 \description{
-Takes a the output of \code{screen_abst_list} and creates a series of
+Takes a the output of \code{screen_list_abst} and creates a series of
 .csv files that may be distributed to the individuals that will screen
 abstracts
 }
 \examples{
 \dontrun{
-screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
+screening_list <- screen_list_abst(form_mm_recs, c("you", "me"))
 screen_write(screening_list, dir = "./")
 }
 }

@@ -10,23 +10,23 @@
 #' screen abstracts
 #' @examples
 #' \dontrun{
-#' screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
+#' screening_list <- screen_list_abst(form_mm_recs, c("you", "me"))
 #' }
 #' @export
-screen_abst_list <- function(x,
+screen_list_abst <- function(x,
                              reviewers,
                              title_col = "TITLE",
                              abstract_col = "ABSTRACT") {
-    UseMethod("screen_abst_list")
+    UseMethod("screen_list_abst")
 }
 
 #' @export
-screen_abst_list.default <- function(x, ...) {
+screen_list_abst.default <- function(x, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-screen_abst_list.data.frame <- function(x,
+screen_list_abst.data.frame <- function(x,
                                         reviewers,
                                         title_col = "TITLE",
                                         abstract_col = "ABSTRACT") {
@@ -52,22 +52,22 @@ screen_abst_list.data.frame <- function(x,
 #' screen abstracts
 #' @examples
 #' \dontrun{
-#' screening_list <- screen_fulltxt_list(form_mm_recs, c("you", "me"))
+#' screening_list <- screen_list_fulltxt(form_mm_recs, c("you", "me"))
 #' }
 #' @export
-screen_fulltxt_list <- function(x,
+screen_list_fulltxt <- function(x,
                                 reviewers,
                                 cols = "TITLE") {
-    UseMethod("screen_fulltxt_list")
+    UseMethod("screen_list_fulltxt")
 }
 
 #' @export
-screen_fulltxt_list.default <- function(x, ...) {
+screen_list_fulltxt.default <- function(x, ...) {
     stop("x must be of class data.frame")
 }
 
 #' @export
-screen_fulltxt_list.data.frame <- function(x,
+screen_list_fulltxt.data.frame <- function(x,
                                            reviewers,
                                            cols = "TITLE") {
     base_sheet <- x[, unique(c("UNIQUE_ID", cols))]
@@ -83,16 +83,16 @@ screen_fulltxt_list.data.frame <- function(x,
 
 #' Create .csv files for abstract screening
 #'
-#' Takes a the output of \code{screen_abst_list} and creates a series of
+#' Takes a the output of \code{screen_list_abst} and creates a series of
 #' .csv files that may be distributed to the individuals that will screen
 #' abstracts
 #'
-#' @param x The list created by \code{screen_abst_list}
+#' @param x The list created by \code{screen_list_abst}
 #' @param dir The desired directory into which .csv files will be placed
 #' @return NULL
 #' @examples
 #' \dontrun{
-#' screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
+#' screening_list <- screen_list_abst(form_mm_recs, c("you", "me"))
 #' screen_write(screening_list, dir = "./")
 #' }
 #' @export
@@ -112,12 +112,12 @@ screen_write <- function(x, dir = "../intermediate_data/") {
 #' @param dir The directory containing complete screening forms
 #' @param ref_table The original set of records from which screening sheets
 #' were collected. Note: this must be unaltered from the point at which
-#' screening forms were first generated with \code{screen_abst_list}.
+#' screening forms were first generated with \code{screen_list_abst}.
 #' @return A \code{data.frame} with the combined results of all screening
 #' sheets, plus the publication data from \code{ref_table}
 #' @examples
 #' \dontrun{
-#' screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
+#' screening_list <- screen_list_abst(form_mm_recs, c("you", "me"))
 #' screen_write(screening_list, dir = "./")
 #' # Abstracts should be screened at this point
 #' combined_screening_forms <- screen_read("./", form_mm_recs)
