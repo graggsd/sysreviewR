@@ -1,6 +1,6 @@
 Package: sysreviewR
 Title: Facilitates Management of Publication Records for Systematic Review
-Version: 0.1.0
+Version: 0.0.9001
 Authors@R: person("Stephen", "Gragg", email = "graggsd@uab.edu",
                   role = c("aut", "cre"))
 Description: This package provides functions to manage publication records 
