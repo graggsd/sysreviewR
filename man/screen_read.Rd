@@ -11,7 +11,7 @@ screen_read(dir = "../intermediate_data/", ref_table)
 
 \item{ref_table}{The original set of records from which screening sheets
 were collected. Note: this must be unaltered from the point at which
-screening forms were first generated with \code{screen_make_list}.}
+screening forms were first generated with \code{screen_abst_list}.}
 }
 \value{
 A \code{data.frame} with the combined results of all screening
@@ -23,7 +23,7 @@ into a \code{data.frame}
 }
 \examples{
 \dontrun{
-screening_list <- screen_make_list(form_mm_recs, c("you", "me"))
+screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
 screen_write(screening_list, dir = "./")
 # Abstracts should be screened at this point
 combined_screening_forms <- screen_read("./", form_mm_recs)
