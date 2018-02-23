@@ -16,7 +16,7 @@
 #' @seealso \code{\link{format_RISmed}}
 #' @examples
 #' \dontrun{
-#' scopus_data <- read.csv("your_scopus_data.csv", stringsAsFactors = FALSE)
+#' scopus_data <- utils::read.csv("your_scopus_data.csv", stringsAsFactors = FALSE)
 #' form_s_data <- format_scopus(scopus_data)
 #' }
 format_scopus <- function(x) {

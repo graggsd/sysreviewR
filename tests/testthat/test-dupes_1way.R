@@ -1,4 +1,4 @@
-context("test-remove_dupes_1way.R")
+context("test-dupes_rm_1way.R")
 
 test_that("One-way duplicate removal works as expected", {
     new <- data.frame(a = c("Apples", "Oranges", "Bananas"),
@@ -19,6 +19,6 @@ test_that("One-way duplicate removal works as expected", {
                                d = c("Green", "Orange", "", ""),
                                stringsAsFactors = FALSE)
 
-    x <- find_dupes_1way(old, new, c("a", "b"), min_length = c(7, 1))
-    expect_equivalent(remove_dupes_1way(x), expected_out)
+    x <- dupes_find_1way(old, new, c("a", "b"), min_length = c(7, 1))
+    expect_equivalent(dupes_rm_1way(x), expected_out)
 })

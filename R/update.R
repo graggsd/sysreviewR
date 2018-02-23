@@ -38,11 +38,11 @@
 update_data <- function(empty,
                         populated,
                         match_cols,
+                        replace_cols,
                         approx_match = FALSE,
-                        string_dist = 10,
+                        string_dist = 1,
                         min_length = 20,
-                        simplify_match = TRUE,
-                        replace_cols = NULL) {
+                        simplify_match = TRUE) {
     UseMethod("update_data")
 }
 
@@ -55,16 +55,29 @@ update_data.default <- function(empty, ...) {
 update_data.data.frame <- function(empty,
                                    populated,
                                    match_cols,
+                                   replace_cols,
                                    approx_match = FALSE,
                                    string_dist = 10,
                                    min_length = 20,
-                                   simplify_match = TRUE,
-                                   replace_cols = NULL) {
+                                   simplify_match = TRUE) {
+
+    # Check assumptions about match_cols and replace cols
+    check_col_args_update(match_cols, empty, populated)
+    check_col_args_update(replace_cols, empty, populated)
+
+    # Make provisions so that match_cols can be specified separately
+    if (is.list(match_cols)) {
+        match_cols_e <- match_cols[[1]]
+        match_cols_p <- match_cols[[2]]
+    } else {
+        match_cols_e <- match_cols
+        match_cols_p <- match_cols
+    }
 
     # Make matching columns for both the blank dataset and the one that will
     # be used to update it.
-    empty <- add_matching_col(empty, match_cols, simplify_match)
-    populated <- add_matching_col(populated, match_cols, simplify_match)
+    empty <- add_matching_col(empty, match_cols_e, simplify_match)
+    populated <- add_matching_col(populated, match_cols_p, simplify_match)
 
     if (approx_match) {
         idx <- get_matching_index_approx(empty, populated, string_dist)
@@ -79,6 +92,16 @@ update_data.data.frame <- function(empty,
     idx <- remove_short_string_matches(idx, empty, min_length)
 
     if (sum(unlist(lapply(idx, length))) > 0) {
+
+        # Assign replace_cols based on class of argument
+        if (is.list(replace_cols)) {
+            replace_cols_e <- replace_cols[[1]]
+            replace_cols_p <- replace_cols[[2]]
+        } else {
+            replace_cols_e <- replace_cols
+            replace_cols_p <- replace_cols
+        }
+
         # Make sure there are not matches between rows in 'populated' and 'empty'.
         # Send a warning for rows with multiple matches and remove the extra
         # matches.
@@ -87,7 +110,11 @@ update_data.data.frame <- function(empty,
         idx <- remove_multi_matches(idx)
 
         # Take update empty with populated using the finalized index
-        final <- finalize_matches(empty, populated, idx, replace_cols)
+        final <- finalize_matches(empty,
+                                  populated,
+                                  idx,
+                                  replace_cols_e,
+                                  replace_cols_p)
 
     } else {
         final <- empty
@@ -102,6 +129,63 @@ update_data.data.frame <- function(empty,
 }
 
 # Helper functions ------------------------------------------------------------
+
+# Argument checking for match_cols
+
+check_col_args_update <- function(match_cols, empty, populated) {
+    if (is.list(match_cols)) {
+        if (length(match_cols) != 2) {
+            stop(paste0("If match_cols is a list, it must be of length 2, ",
+                        "with the first element of the list referencing ",
+                        "columns in 'empty', and the second element ",
+                        "referencing columns in 'populated'."))
+        }
+        if (class(match_cols[[1]]) != class(match_cols[[2]])) {
+            stop(paste0("If match_cols is a list, both elements of match_cols ",
+                        "must be of either class 'character' or class",
+                        " 'numeric'."))
+        }
+        if (length(match_cols[[1]]) != length(match_cols[[2]])) {
+            stop(paste0("If match_cols is a list, both elements of match_cols ",
+                        "must be of the same length"))
+        }
+        if (class(match_cols[[1]]) %in% c("numeric", "integer")) {
+            if(sum(!(match_cols[[1]] %in% 1:ncol(empty))) != 0 |
+               sum(!(match_cols[[2]] %in% 1:ncol(populated))) != 0) {
+                stop(paste0("Numeric indices within the first and second",
+                            " elements of match_cols, must be contained within",
+                            " 'empty' and 'populated' respectively."))
+            }
+        } else if (class(match_cols[[1]]) == "character") {
+            if(sum(!(match_cols[[1]] %in% colnames(empty))) != 0 |
+               sum(!(match_cols[[2]] %in% colnames(populated))) != 0) {
+                stop(paste0("The column names specified within the first and ",
+                            "second elements of match_cols, must be contained",
+                            " within 'empty' and 'populated' respectively."))
+            }
+        } else {
+            stop(paste0("Each element of match_cols must be of class ",
+                        "'character' or 'numeric'"))
+        }
+    } else if (class(match_cols) %in% c("numeric", "integer")) {
+        if (sum(!(match_cols %in% 1:ncol(empty))) != 0 |
+            sum(!(match_cols %in% 1:ncol(populated))) != 0) {
+            stop(paste0("Numeric indices specified by match_cols",
+                        " must be contained within",
+                        " 'empty' and 'populated'."))
+        }
+    } else if (class(match_cols) == "character") {
+        if (sum(!(match_cols %in% colnames(empty))) != 0 |
+            sum(!(match_cols %in% colnames(populated))) != 0) {
+            stop(paste0("The column names specified in match_cols, must be ",
+                        "contained in 'empty' and 'populated'."))
+        }
+    } else {
+        stop(paste0("match_cols must be of class 'character' or 'numeric', ",
+                    "or must be a list of length 2 containing vectors of only ",
+                    "one of these classes"))
+    }
+}
 
 # For each row in 'empty', gets a vector of rows in 'populated' that form a
 # perfect match
@@ -123,8 +207,8 @@ get_matching_index_approx <- function(empty, populated, string_dist) {
 remove_multi_matches <- function(idx) {
     multi_match_idx <- which(sapply(idx, length) > 1)
     if (length(multi_match_idx) > 0) {
-        warning(paste0("Rows ",
-                       paste(which(multi_match_idx), sep = ", "),
+        warning(paste0("Row(s) ",
+                       paste(multi_match_idx, collapse = ", "),
                        " of 'empty' have multiple matches to rows in ",
                        "'populated'. Using only the first match."))
         for (i in multi_match_idx) {
@@ -151,14 +235,15 @@ remove_short_string_matches <- function(idx, empty, min_length) {
     return(idx)
 }
 
-finalize_matches <- function(empty, populated, idx, replace_cols = NULL) {
+finalize_matches <- function(empty,
+                             populated,
+                             idx,
+                             replace_cols_e,
+                             replace_cols_p) {
 
-    if (is.null(replace_cols)) {
-        replace_cols <- 1:ncol(empty)
-    }
     for (i in 1:length(idx)) {
         if (length(idx[[i]]) > 0) {
-            empty[i, replace_cols] <- populated[idx[[i]], replace_cols]
+            empty[i, replace_cols_e] <- populated[idx[[i]], replace_cols_p]
         }
     }
     return(empty)

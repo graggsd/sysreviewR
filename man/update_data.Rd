@@ -4,9 +4,8 @@
 \alias{update_data}
 \title{Update a revised publication table with previously extracted information}
 \usage{
-update_data(empty, populated, match_cols, approx_match = FALSE,
-  string_dist = 10, min_length = 20, simplify_match = TRUE,
-  replace_cols = NULL)
+update_data(empty, populated, match_cols, replace_cols, approx_match = FALSE,
+  string_dist = 1, min_length = 20, simplify_match = TRUE)
 }
 \arguments{
 \item{empty}{The new set of publication records}
@@ -15,6 +14,8 @@ update_data(empty, populated, match_cols, approx_match = FALSE,
 
 \item{match_cols}{Column(s) that will be used to match
 \code{empty} and \code{populated}}
+
+\item{replace_cols}{Column(s) to replace in \code{empty}}
 
 \item{approx_match}{Whether to use string distances or exact values when
 matching records.}
@@ -27,8 +28,6 @@ a record will be considered when matching records.}
 
 \item{simplify_match}{Whether to perform matching on strings composed from
 \code{match_cols}, but with non alpha-numeric values removed.}
-
-\item{replace_cols}{Column(s) to replace in \code{empty}}
 }
 \value{
 An updated version of \code{empty}, which will be updated where
