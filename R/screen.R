@@ -93,18 +93,50 @@ screen_list_fulltxt.data.frame <- function(x,
 #' @examples
 #' \dontrun{
 #' screening_list <- screen_list_abst(form_mm_recs, c("you", "me"))
-#' screen_write(screening_list, dir = "./")
+#' screen_write_abst(screening_list, dir = "./")
 #' }
 #' @export
-screen_write <- function(x, dir = "../intermediate_data/") {
+screen_write_abst <- function(x, dir = "../intermediate_data/") {
+    screen_write(x = x, dir = dir, abstract = TRUE)
+}
+
+
+#' Create .csv files for full-text screening
+#'
+#' Takes a the output of \code{screen_list_fulltxt} and creates a series of
+#' .csv files that may be distributed to the individuals that will screen
+#' full-text articles
+#'
+#' @param x The list created by \code{screen_list_fulltxt}
+#' @param dir The desired directory into which .csv files will be placed
+#' @return NULL
+#' @examples
+#' \dontrun{
+#' screening_list <- screen_list_fulltxt(form_mm_recs, c("you", "me"))
+#' screen_write_fulltxt(screening_list, dir = "./")
+#' }
+#' @export
+screen_write_fulltxt <- function(x, dir = "../intermediate_data/") {
+    screen_write(x = x, dir = dir, abstract = FALSE)
+}
+
+# Helper function:
+screen_write <- function(x, dir = "../intermediate_data/", abstract) {
+
+    if (abstract) {
+        prefix <- "AbstScreener_"
+    } else {
+        prefix <- "FulltxtScreener_"
+    }
+
     for (reviewer in names(x)) {
         utils::write.csv(x[[reviewer]],
-                  file = paste0(dir, "AbstScreener_", reviewer, ".csv"),
-                  row.names = FALSE)
+                         file = paste0(dir, prefix, reviewer, ".csv"),
+                         row.names = FALSE)
     }
 }
 
-#' Reads completed abstract screening .csv
+#' Reads completed abstract screening .csv files
 #'
 #' Takes a series of completed abstract screening forms and assembles them
 #' into a \code{data.frame}
@@ -118,28 +150,72 @@ screen_write <- function(x, dir = "../intermediate_data/") {
 #' @examples
 #' \dontrun{
 #' screening_list <- screen_list_abst(form_mm_recs, c("you", "me"))
-#' screen_write(screening_list, dir = "./")
+#' screen_write_abst(screening_list, dir = "./")
 #' # Abstracts should be screened at this point
 #' combined_screening_forms <- screen_read("./", form_mm_recs)
 #' }
 #' @export
-screen_read <- function(dir = "../intermediate_data/", ref_table) {
-    files <- paste0(dir, list.files(path = dir, pattern = "AbstScreener"))
-    names <- gsub("^.*AbstScreener_|\\.csv$", "", files)
-    keeper_cols <-
-        apply(expand.grid(names,
-                          c("OBTAINABLE", "INCLUDE", "EXCLUSION_RATIONALE")),
-              1, paste, collapse = "_")
-    keeper_cols <- c(names, "UNIQUE_ID", keeper_cols)
-    abs_scr_list <-
+screen_read_abst <- function(ref_table, dir = "../intermediate_data/") {
+    screen_read(ref_table = ref_table, dir = dir, abstract = TRUE)
+}
+
+#' Reads completed full-text screening .csv files
+#'
+#' Takes a series of completed full-text screening forms and assembles them
+#' into a \code{data.frame}
+#'
+#' @param dir The directory containing complete screening forms
+#' @param ref_table The original set of records from which screening sheets
+#' were collected. Note: this must be unaltered from the point at which
+#' screening forms were first generated with \code{screen_list_abst}.
+#' @return A \code{data.frame} with the combined results of all screening
+#' sheets, plus the publication data from \code{ref_table}
+#' @examples
+#' \dontrun{
+#' screening_list <- screen_list_fulltxt(form_mm_recs, c("you", "me"))
+#' screen_list_fulltxt(screening_list, dir = "./")
+#' # Full-text articles should be screened at this point
+#' combined_screening_forms <- screen_read_fulltxt("./", form_mm_recs)
+#' }
+#' @export
+screen_read_fulltxt <- function(ref_table, dir = "../intermediate_data/") {
+    screen_read(ref_table = ref_table, dir = dir, abstract = FALSE)
+}
+
+# Helper function
+screen_read <- function(ref_table, dir = "../intermediate_data/", abstract) {
+
+    # Decide on prefix of files
+    if (abstract) {
+        prefix <- "AbstScreener_"
+    } else {
+        prefix <- "FulltxtScreener_"
+    }
+
+    # Fined file names and reviewer names
+    files <- paste0(dir, list.files(path = dir, pattern = prefix))
+    names <- gsub(paste0("^.*", prefix, "|\\.csv$"), "", files)
+
+    # Decide on which columns to keep
+    if (abstract) {
+        keeper_cols <- c(names, "UNIQUE_ID")
+    } else {
+        keeper_cols <-
+            apply(expand.grid(names,
+                              c("OBTAINABLE", "INCLUDE", "EXCLUSION_RATIONALE")),
+                  1, paste, collapse = "_")
+        keeper_cols <- c("UNIQUE_ID", keeper_cols)
+    }
+
+    # Read all files into a list, combine the lists into a data.frame
+    # based on UNIQUE_ID, then combine with the reference table
+    return(
         lapply(files,
                function(x) {
                    out <- utils::read.csv(x, stringsAsFactors = FALSE)
                    idx <- which(colnames(out) %in% keeper_cols)
-                   out <- out[, idx]
-               })
-    return(
-        purrr::reduce(abs_scr_list, dplyr::full_join, by = "UNIQUE_ID") %>%
+                   return(out[, idx])}) %>%
+            purrr::reduce(dplyr::full_join, by = "UNIQUE_ID") %>%
             dplyr::full_join(ref_table, by = "UNIQUE_ID")
     )
 }
