@@ -45,20 +45,20 @@ screen_abst_list.data.frame <- function(x,
 #'
 #' Creates a list of \code{data.frame}s to screen full texts
 #'
-#' @param x A set of publication records without duplicates
+#' @param x A set of publications records for full-text screening
 #' @param reviewers Names of people that will screen full texts
 #' @param cols Columns from x to include in the full-text screeners
 #' @return A list of of \code{data.frame}s, formatted for each reviewer to
 #' screen abstracts
 #' @examples
 #' \dontrun{
-#' screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
+#' screening_list <- screen_fulltxt_list(form_mm_recs, c("you", "me"))
 #' }
 #' @export
 screen_fulltxt_list <- function(x,
                                 reviewers,
                                 cols = "TITLE") {
-    UseMethod("screen_abst_list")
+    UseMethod("screen_fulltxt_list")
 }
 
 #' @export
@@ -71,9 +71,10 @@ screen_fulltxt_list.data.frame <- function(x,
                                            reviewers,
                                            cols = "TITLE") {
     base_sheet <- x[, unique(c("UNIQUE_ID", cols))]
+    new_cols <- c("OBTAINABLE", "INCLUDE", "EXCLUSION_RATIONALE")
     out <- lapply(reviewers,
                   function(x) {
-                      base_sheet[, x] <- "not vetted"
+                      base_sheet[, paste0(x, "_", new_cols)] <- "not vetted"
                       return(base_sheet)
                   })
     names(out) <- reviewers

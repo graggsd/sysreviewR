@@ -7,7 +7,7 @@
 screen_fulltxt_list(x, reviewers, cols = "TITLE")
 }
 \arguments{
-\item{x}{A set of publication records without duplicates}
+\item{x}{A set of publications records for full-text screening}
 
 \item{reviewers}{Names of people that will screen full texts}
 
@@ -22,6 +22,6 @@ Creates a list of \code{data.frame}s to screen full texts
 }
 \examples{
 \dontrun{
-screening_list <- screen_abst_list(form_mm_recs, c("you", "me"))
+screening_list <- screen_fulltxt_list(form_mm_recs, c("you", "me"))
 }
 }
