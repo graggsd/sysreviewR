@@ -1,6 +1,18 @@
-
+#' Remove approximate duplicated
+#'
+#' Removes approximate duplicates using a user-defined cutoff string distance
+#'
+#' @param x A vector
+#' @param string_dist A minimum string distance
+#' @param protect_length A minimum length a which strings will be considered
+#' @return A vector with only one copy of each duplicated element
+#' @examples
+#' \dontrun{
+#' fuzzy_unique(c("Apples", "Oranges", "Bananas", "Apple"),
+#'              string_dist = 3, protect_length = 3)
+#' }
 #' @export
-fuzzy_unique <- function(x, string_dist = 10, protect_length = NULL) {
+fuzzy_unique <- function(x, string_dist = 5, protect_length = 5) {
     # Remove NA values
     x <- as.character(na.omit(x))
     # Remove alpha-numerics and subset x for some minimum length
@@ -34,8 +46,23 @@ fuzzy_unique <- function(x, string_dist = 10, protect_length = NULL) {
     return(x)
 }
 
+#' Find approximately matching values
+#'
+#' Finds values from \code{x} that are approximately duplicated \code{y}
+#'
+#' @param x The values to be matched
+#' @param y The values to be matched against
+#' @param string_dist A minimum string distance
+#' @param protect_length A minimum length a which strings will be considered
+#' @return A logical vector indicate values in \code{x} duplicated in \code{y}
+#' @examples
+#' \dontrun{
+#' fuzzy_in(c("Apples", "Oranges", "Bananas"),
+#'          c("Apple", "Oranges", "Bananas")
+#'          string_dist = 3, protect_length = 3)
+#' }
 #' @export
-fuzzy_in <- function(x, y, string_dist = 10, protect_length = NULL) {
+fuzzy_in <- function(x, y, string_dist = 5, protect_length = 5) {
 
     # Remake the simplified x vector
     x_simplified <- simplify_string(x)

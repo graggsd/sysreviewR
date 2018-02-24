@@ -8,7 +8,9 @@ test_that("fuzzy_unique does exact matching when string_dist = 0", {
 
 test_that("fuzzy_unique eliminates close matches", {
     strings <- c("Apples", "Oranges", "Bananas", "Apple")
-    expect_equivalent(fuzzy_unique(strings, string_dist = 2),
+    expect_equivalent(fuzzy_unique(strings,
+                                   string_dist = 2,
+                                   protect_length = 2),
                       strings[-4])
 
     bat_ipsum1 <- c("Accomplice? I'm gonna tell them the whole thing was your idea.",
@@ -41,7 +43,8 @@ test_that("fuzzy_in does exact matching when string_dist = 0", {
 test_that("fuzzy_in does fuzzy matching when string_dist != 0", {
     strings1 <- c("Apples", "Oranges", "Bananas")
     strings2 <- c("Apple", "Oranges", "Bananas")
-    expect_equivalent(fuzzy_in(strings1, strings2, string_dist = 2),
+    expect_equivalent(fuzzy_in(strings1, strings2,
+                               string_dist = 2, protect_length = 2),
                       c(TRUE, TRUE, TRUE))
 
     bat_ipsum1 <- c("Accomplice? I'm gonna tell them the whole thing was your idea.",
