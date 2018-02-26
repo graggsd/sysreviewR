@@ -30,15 +30,17 @@ fuzzy_unique <- function(x, string_dist = 5, protect_length = 5) {
     remove[is.na(remove)][which(duplicated(x_simplified[is.na(remove)]))] <-
         TRUE
 
-    for (i in 1:length(x_simplified)) {
-        if (!is.na(remove[i])) next
-        remove[i] <- FALSE
-        na_idx <- which(is.na(remove))
-        if (length(na_idx) == 0) next
-        match_idx <- which(utils::adist(x_simplified[i],
-                                        x_simplified[na_idx]) < string_dist)
-        if(length(match_idx) == 0) next
-        remove[na_idx][match_idx] <- TRUE
+    if (string_dist > 0) {
+        for (i in 1:length(x_simplified)) {
+            if (!is.na(remove[i])) next
+            remove[i] <- FALSE
+            na_idx <- which(is.na(remove))
+            if (length(na_idx) == 0) next
+            match_idx <- which(utils::adist(x_simplified[i],
+                                            x_simplified[na_idx]) <= string_dist)
+            if(length(match_idx) == 0) next
+            remove[na_idx][match_idx] <- TRUE
+        }
     }
     if (length(which(remove)) != 0) {
         x <- x[-which(remove)]
@@ -72,18 +74,19 @@ fuzzy_in <- function(x, y, string_dist = 5, protect_length = 5) {
 
     if (!is.null(protect_length)) {
         y_simplified <-
-            y_simplified[which(nchar(y_simplified) > protect_length)]
-        is_in[which(nchar(x_simplified) <= protect_length)] <-
+            y_simplified[which(nchar(y_simplified) >= protect_length)]
+        is_in[which(nchar(x_simplified) < protect_length)] <-
             FALSE
     }
 
     is_in[is.na(is_in)][which(x_simplified[is.na(is_in)] %in% y_simplified)] <-
         TRUE
-
-    for (i in 1:length(x_simplified)) {
-        if (!is.na(is_in[i])) next
-        is_in[i] <- sum(utils::adist(x_simplified[i],
-                                     y_simplified) < string_dist) > 0
+    if (string_dist > 0) {
+        for (i in 1:length(x_simplified)) {
+            if (!is.na(is_in[i])) next
+            is_in[i] <- sum(utils::adist(x_simplified[i],
+                                         y_simplified) <= string_dist) > 0
+        }
     }
     return(is_in)
 }
