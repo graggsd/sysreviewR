@@ -87,7 +87,10 @@ fuzzy_in <- function(x, y, string_dist = 5, protect_length = 5) {
             is_in[i] <- sum(utils::adist(x_simplified[i],
                                          y_simplified) <= string_dist) > 0
         }
+    } else {
+        is_in[is.na(is_in)] <- FALSE
     }
+
     return(is_in)
 }
 
