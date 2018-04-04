@@ -176,7 +176,7 @@ dupes_rm.data.frame <- function(x, db_pref = NULL, ignore_IDs = NULL) {
         # Give precedence to certain databases if they are contained
         # within the duplicates dataframe
         if (!is.null(db_pref) &&
-            sum(grepl(db_search, duplicate.df[,"DATABASE"])) > 0) {
+            sum(grepl(db_search, duplicate.df[, "DATABASE"])) > 0) {
 
             # Find which IDs to remove
             removal_ids <- duplicate.df[!(grepl(db_search,
